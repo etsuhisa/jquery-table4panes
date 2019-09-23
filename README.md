@@ -1,4 +1,4 @@
-#jQuery Table4Panes 1.0.0
+# jQuery Table4Panes 1.0.0
 Split the table to four panes.
 
 ## Demo
