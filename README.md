@@ -42,7 +42,7 @@ The "display-method" option can be one of the following values.
 * "float"
 
 ### "fit"
-If it is true, fit the bottom right pane fits the parent node.
+If it is true, the bottom right pane fits the parent node.
 
 ### Size
 The size of each pane is specified the following:
