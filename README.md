@@ -19,6 +19,14 @@ Specify the number of columns in the first parameter and the number of rows in t
 The settings (ex. display size, display method) specify in the third parameter.
 
 ```js
+$.fn.table4panes(col_num, row_num, settings)
+```
+
+## Example
+
+Fixed in 4 columns and 3 rows, displayed on the entire screen.
+
+```js
 $(function(){
     $("#demo-table").table4panes(4,3,{"display-method":"flex", "width":"100%", "height":"100%", "fit":true});
 });
