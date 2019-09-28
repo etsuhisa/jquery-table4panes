@@ -1,5 +1,5 @@
 /**
- * jquery-table4panes 1.0.0 - jQuery plugin to split the table to four panes.
+ * jquery-table4panes 1.1.0 - jQuery plugin to split the table to four panes.
  *
  * Copyright (c) 2019 ASAI Etsuhisa
  * This software is released under the MIT License.
@@ -16,6 +16,7 @@
  *   "display-method": ("inline-block"|"table-cell"|"flex"|"float") - Select the method.
  *   "fit": (true|flase) - If true, fit the bottom right pane fits the parent node.
  *   ("height"|"top-height"|"bottom-height"|"width"|"left-width"|"right-width"): size - Set the size.
+ *   "fix-width-rows": num - Fix the width of columns with the specified number of rows.
  *   "callbacks": {"selector1": {"event":"event1", "func":"func1", "data":"data1"},
  *                 "selector2": {"event":"event2", "func":"func2", "data":"data2"}, ... } - Set the callbacks.
  *   "css": {"selector1": "css-map1", "selector2": "css-map2", ... } - Map the css.
@@ -58,6 +59,31 @@
 ;(function($){
 
 	/**
+	 * getSubtractedNums(num)
+	 * Get the array with the number of rowspan subtracted.
+	 * @param this (in) parent node of tr
+	 * @param num (in) number to move
+	 * @return array of number of column to move.
+	 */
+	var getSubtractedNums = function(num){
+		var nums = new Array(this.children.length).fill(num);
+		/** tr list */
+		for(var i = 0; i < this.children.length; i++){
+			var tr = this.children[i];
+			/** th/td list */
+			for(var j = 0; j < nums[i] && j < tr.children.length; j++){
+				var td = tr.children[j];
+				/** Subtract rowspan from number of column to move. */
+				var colspan = td.colSpan - 1;
+				for(var k = 1; k < td.rowSpan && i + k < nums.length; k++){
+					nums[i + k] -= 1 + colspan;
+				}
+			}
+		}
+		return nums;
+	}
+
+	/**
 	 * moveToNewTable(kind, num)
 	 * Move rows/columns to a newly created table that inherits the source table/thead/tbody.
 	 * The function treats the DOM object only, expect this.
@@ -70,12 +96,19 @@
 		var src = this;
 		var dst = src.cloneNode(false);
 		dst.removeAttribute("id");
+		var nums = null;
 		for(var i = 0; i < src.children.length && num > 0; i++){
 			var elm = src.children[i];
 			var tag = elm.nodeName.toLowerCase();
 			if(tag == "thead" || tag == "tbody" || (tag == "tr" && kind == "col")){
+				if(tag == "tr" && kind == "col"){
+					if(nums == null){
+						nums = getSubtractedNums.call(this, num);
+					}
+					num = nums[i];
+				}
 				dst.appendChild(moveToNewTable.call(elm, kind, num));
-				if((tag == "thead" || tag == "tbody") && kind == "row"){
+				if(kind == "row"){
 					num -= dst.children.length;
 				}
 				if(elm.children.length <= 0){
@@ -86,23 +119,10 @@
 			else if(tag == "tr" || tag == "th" || tag == "td"){
 				dst.appendChild(elm);
 				i--;
-				num--;
+				num -= (elm.colSpan || 1);
 			}
 		}
 		return dst;
-	}
-
-	/**
-	 * getWidthCols()
-	 * @param this (in) table node
-	 * @return the array of width of all columns in the first row.
-	 */
-	var getWidthCols = function(){
-		var arr = [];
-		$(this).find("tr:eq(0)").children().each(function(i,elm){
-			arr.push($(elm).width());
-		});
-		return arr;
 	}
 
 	/**
@@ -119,15 +139,17 @@
 	}
 
 	/**
-	 * setWidthCols(arr)
-	 * Set width of all columns in the first row.
+	 * setWidthCols(row_num)
+	 * Set width of all columns in the specified rows.
 	 * @param this (in) table node
-	 * @param arr (in) width of columns
-	 * @return this.
+	 * @param row_num (in) number of rows to set width.
+	 * @return this
 	 */
-	var setWidthCols = function(arr){
-		$(this).find("tr:eq(0)").children().each(function(i,elm){
-			setFixWidth.call($(elm), arr[i]);
+	var setWidthCols = function(row_num){
+		$(this).find("tr:lt("+row_num+")").each(function(i,tr){
+			$(tr).children().each(function(j,elm){
+				setFixWidth.call($(elm), $(elm).width());
+			});
 		});
 		return $(this);
 	}
@@ -180,6 +202,8 @@
 		/** Set the default class name prefix, if no prefix. */
 		var prefix = "table4panes";
 		if(settings && settings["prefix"]) prefix = settings["prefix"];
+		fix_width_rows = row_num + 1;
+		if(settings && settings["fix-width-rows"]) fix_width_rows = settings["fix-width-rows"];
 
 		/** Decide IDs. */
 		var id_table = $(this).attr("id");
@@ -192,12 +216,11 @@
 		var id_bottom_right = id_table + "-bottom-right";
 
 		/** Prepare to split the table. */
-		/** Set inherited information. */
 		$(this).css({"table-layout":"fixed"});
 		$(this).addClass("pane");
-		/** Get current information before operation. */
-		var col_widths = getWidthCols.call($(this));
-		var row_heights = getHeightRows.call($(this));
+		setWidthCols.call($(this), fix_width_rows); /* Fix width of columns */
+		var row_heights = getHeightRows.call($(this)); /* Get height of rows */
+
 		/** Wrap table with div node. */
 		var $div_table4panes = $(this).wrap("<div id='"+id_table4panes+"'>").parent();
 
@@ -210,10 +233,6 @@
 		setHeightRows.call($table_bottom_left, row_heights);
 		var $table_top_right = $(moveToNewTable.call($table_bottom_right[0], "row", row_num));
 		var $table_top_left = $(moveToNewTable.call($table_bottom_left[0], "row", row_num));
-		setWidthCols.call($table_bottom_right, col_widths.slice(col_num));
-		setWidthCols.call($table_bottom_left, col_widths.slice(0,col_num));
-		setWidthCols.call($table_top_right, col_widths.slice(col_num));
-		setWidthCols.call($table_top_left, col_widths.slice(0,col_num));
 
 		/** Insert tables so that they are in the order of top left, bottom left, top right, bottom right. */
 		$table_bottom_right.before($table_top_right);

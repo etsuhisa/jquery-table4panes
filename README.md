@@ -1,9 +1,10 @@
-# jQuery Table4Panes 1.0.0
-Split the table to four panes.
+# jQuery Table4Panes 1.1.0
+Split the table into 4 panes with only JavaScript without changing the HTML.
 
 ## Demo
 Refer the following:
 * demo-jquery-table4panes.html
+* demo-jquery-table4panes_span.html
 
 ## Usage
 
@@ -24,7 +25,7 @@ $.fn.table4panes(col_num, row_num, settings)
 
 ## Example
 
-Fixed in 4 columns and 3 rows, displayed on the entire screen.
+Call the following to fix it in 4 columns and 3 rows and display it on the entire screen.
 
 ```js
 $(function(){
@@ -32,10 +33,10 @@ $(function(){
 });
 ```
 
-## Settings
+## Settings(3rd parameter)
 
 ### "display-method"
-The "display-method" option can be one of the following values.
+The "display-method" option can be one of the following CSS side-by-side methods:
 * "inline-block"
 * "table-cell"
 * "flex"
@@ -50,14 +51,18 @@ The size of each pane is specified the following:
 * Height of each pane is specified by "top-height" and "bottom-height".
 * Width of each pane is specified by "left-width" and "right-width".
 
+### "fix-width-rows"
+The option specifies the number of rows used to fix the column width.
+The default value is "row_num + 1".
+
 ### "callbacks"
-The callbacks for the events are specified by "callbacks" with event/function/data for selectors.
+The option specifies event/function/data for the selectors and specifies callbacks for each event.
 
 ### "css"
-The CSS maps for selectors are specified by "css".
+This option specifies the CSS for the selectors.
 
 ### "prefix"
-The class name prefix can be changed from the default "table4panes" by "prefix".
+The option changes the class name prefix from the default "table4panes".
 
 ## License
 Copyright &copy; ASAI Etsuhisa<br>
