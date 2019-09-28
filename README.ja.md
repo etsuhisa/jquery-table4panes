@@ -1,69 +1,69 @@
 # jQuery Table4Panes 1.1.0
-HTML��ύX������JavaScript�݂̂Ńe�[�u����4�̃y�C���ɕ������܂��B
+HTMLを変更せずにJavaScriptのみでテーブルを4つのペインに分割します。
 
-## �f��
-�ȉ����Q�Ƃ��Ă��������B
+## デモ
+以下を参照してください。
 * demo-jquery-table4panes.html
 * demo-jquery-table4panes_span.html
 
-## �g����
+## 使い方
 
-jQuery�Ƃ��̃v���O�C�����y�[�W�Ɋ܂߂Ă��������B
+jQueryとこのプラグインをページに含めてください。
 
 ```html
 <script src="jquery.min.js"></script>
 <script src="jquery-table4panes.min.js"></script>
 ```
 
-��������e�[�u���ɑ΂���table4panes�֐����Ăяo���܂��B
-1�ڂ̈����ɗ񐔁A2�ڂ̈����ɍs�����w�肵�܂��B
-�e��ݒ�(�\���T�C�Y��\�����@�Ȃ�)��3�ڂ̈����Ɏw�肵�܂��B
+分割するテーブルに対してtable4panes関数を呼び出します。
+1つ目の引数に列数、2つ目の引数に行数を指定します。
+各種設定(表示サイズや表示方法など)は3つ目の引数に指定します。
 
 ```js
 $.fn.table4panes(col_num, row_num, settings)
 ```
 
-## ��
+## 例
 
-4��3�s�ŌŒ肵��ʑS�̂ɕ\������ꍇ�́A�ȉ��̂悤�ɌĂяo���܂��B
+4列3行で固定し画面全体に表示する場合は、以下のように呼び出します。
 ```js
 $(function(){
     $("#demo-table").table4panes(4,3,{"display-method":"flex", "width":"100%", "height":"100%", "fit":true});
 });
 ```
 
-## �ݒ�(��3����)
+## 設定(第3引数)
 
 ### "display-method"
-"display-method"�I�v�V�����ɂ́ACSS�̉����т̕��@�Ƃ��Ĉȉ��̂����ꂩ���w��ł��܂��B
+"display-method"オプションには、CSSの横並びの方法として以下のいずれかを指定できます。
 * "inline-block"
 * "table-cell"
 * "flex"
 * "float"
 
 ### "fit"
-true���w�肵���ꍇ�A�E���̃y�C�����e�̃m�[�h�Ƀt�B�b�g���܂��B
+trueを指定した場合、右下のペインが親のノードにフィットします。
 
-### �T�C�Y
-�e�y�C���̃T�C�Y�͈ȉ��Ŏw��ł��܂��B
-* �S�̂̃T�C�Y��"height"��"width"�Ŏw�肵�܂��B
-* �e�y�C���̍�����"top-height"��"bottom-height"�Ŏw�肵�܂��B
-* �e�y�C���̕���"left-width"��"right-width"�Ŏw�肵�܂��B
+### サイズ
+各ペインのサイズは以下で指定できます。
+* 全体のサイズは"height"と"width"で指定します。
+* 各ペインの高さは"top-height"と"bottom-height"で指定します。
+* 各ペインの幅は"left-width"と"right-width"で指定します。
 
 ### "fix-width-rows"
-��̕����Œ肷�邽�߂Ɏg�p����s�̐����w�肵�܂��B
-�f�t�H���g�l��"row_num+1"�ł��B
+列の幅を固定するために使用する行の数を指定します。
+デフォルト値は"row_num+1"です。
 
 ### "callbacks"
-���̃I�v�V�����́A�Z���N�^�ɑ΂�event/function/data���w�肵�A�e�C�x���g�ɑ΂���R�[���o�b�N���w�肵�܂��B
+このオプションは、セレクタに対しevent/function/dataを指定し、各イベントに対するコールバックを指定します。
 
 ### "css"
-���̃I�v�V�����̓Z���N�^�ɑ΂���CSS���w�肵�܂��B
+このオプションはセレクタに対するCSSを指定します。
 
 ### "prefix"
-���̃I�v�V�����́A�N���X���̃v���t�B�b�N�X���f�t�H���g��"table4panes"����ύX���܂��B
+このオプションは、クラス名のプレフィックスをデフォルトの"table4panes"から変更します。
 
-## ���C�Z���X
+## ライセンス
 Copyright &copy; ASAI Etsuhisa<br>
 Licensed under the MIT license.
 
