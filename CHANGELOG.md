@@ -9,10 +9,12 @@
 ### Changes
 
 - Conpatible with IE
+- The option fix-width-rows is specified as an array of lower and upper limit values.
 
 ### Bug Fixes
 
-- none
+- Subtract the number of child elements of thead/tbody.
+- Calculate with width/height as integer values.
 
 ## v1.1.0 - 28th Sep, 2019
 

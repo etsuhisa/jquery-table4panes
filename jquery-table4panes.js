@@ -16,7 +16,7 @@
  *   "display-method": ("inline-block"|"table-cell"|"flex"|"float") - Select the method.
  *   "fit": (true|flase) - If true, fit the bottom right pane fits the parent node.
  *   ("height"|"top-height"|"bottom-height"|"width"|"left-width"|"right-width"): size - Set the size.
- *   "fix-width-rows": num - Fix the width of columns with the specified number of rows.
+ *   "fix-width-rows": [lower,upper] or upper - Fix the width of columns with the specified numbers of lower/upper row.
  *   "callbacks": {"selector1": {"event":"event1", "func":"func1", "data":"data1"},
  *                 "selector2": {"event":"event2", "func":"func2", "data":"data2"}, ... } - Set the callbacks.
  *   "css": {"selector1": "css-map1", "selector2": "css-map2", ... } - Map the css.
@@ -116,9 +116,9 @@
 					}
 					num = nums[i];
 				}
-				dst.appendChild(moveToNewTable.call(elm, kind, num));
+				var chld = dst.appendChild(moveToNewTable.call(elm, kind, num));
 				if(kind == "row"){
-					num -= dst.children.length;
+					num -= chld.children.length;
 				}
 				if(elm.children.length <= 0){
 					/** Compatible with browsers where 'remove' is not defined */
@@ -143,7 +143,7 @@
 	var getHeightRows = function(){
 		var arr = [];
 		$(this).find("tr").each(function(i,elm){
-			arr.push($(elm).height());
+			arr.push(Math.ceil($(elm).height()));
 		});
 		return arr;
 	}
@@ -152,13 +152,22 @@
 	 * setWidthCols(row_num)
 	 * Set width of all columns in the specified rows.
 	 * @param this (in) table node
-	 * @param row_num (in) number of rows to set width.
+	 * @param row_nums (in) numbers of rows to set width.
 	 * @return this
 	 */
 	var setWidthCols = function(row_num){
-		$(this).find("tr:lt("+row_num+")").each(function(i,tr){
+		var row_s = 0;
+		var row_e = 0;
+		if(typeof row_num == "number"){
+			row_e = row_num;
+		}
+		else{
+			row_s = row_num[0];
+			row_e = row_num[1];
+		}
+		$(this).find("tr").slice(row_s,row_e+1).each(function(i,tr){
 			$(tr).children().each(function(j,elm){
-				setFixWidth.call($(elm), $(elm).width());
+				setFixWidth.call($(elm), Math.ceil($(elm).width()));
 			});
 		});
 		return $(this);
@@ -212,8 +221,10 @@
 		/** Set the default class name prefix, if no prefix. */
 		var prefix = "table4panes";
 		if(settings && settings["prefix"]) prefix = settings["prefix"];
-		fix_width_rows = row_num + 1;
-		if(settings && settings["fix-width-rows"]) fix_width_rows = settings["fix-width-rows"];
+		var fix_width_rows = row_num;
+		if(settings && settings["fix-width-rows"]){
+			fix_width_rows = settings["fix-width-rows"];
+		}
 
 		/** Decide IDs. */
 		var id_table = $(this).attr("id");
