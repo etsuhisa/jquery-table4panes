@@ -52,8 +52,8 @@ The size of each pane is specified the following:
 * Width of each pane is specified by "left-width" and "right-width".
 
 ### "fix-width-rows"
-The option specifies the number of rows used to fix the column width.
-The default value is "row_num + 1".
+This option specifies an array of the start and end of the row(index) used to fix the column width.
+The default value is [0, row_num].
 
 ### "callbacks"
 The option specifies event/function/data for the selectors and specifies callbacks for each event.
