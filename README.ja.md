@@ -1,4 +1,4 @@
-# jQuery Table4Panes 1.1.0
+# jQuery Table4Panes 1.1.1
 HTMLを変更せずにJavaScriptのみでテーブルを4つのペインに分割します。
 
 ## デモ

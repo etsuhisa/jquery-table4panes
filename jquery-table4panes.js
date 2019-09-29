@@ -1,5 +1,5 @@
 /**
- * jquery-table4panes 1.1.0 - jQuery plugin to split the table to four panes.
+ * jquery-table4panes 1.1.1 - jQuery plugin to split the table to four panes.
  *
  * Copyright (c) 2019 ASAI Etsuhisa
  * This software is released under the MIT License.
@@ -66,7 +66,16 @@
 	 * @return array of number of column to move.
 	 */
 	var getSubtractedNums = function(num){
-		var nums = new Array(this.children.length).fill(num);
+		var nums = new Array(this.children.length);
+		/** Compatible with browsers where 'fill' is not defined */
+		if(Array.prototype.fill){
+			nums.fill(num);
+		}
+		else{
+			for(var i = 0; i < this.children.length; i++){
+				nums[i] = num;
+			}
+		}
 		/** tr list */
 		for(var i = 0; i < this.children.length; i++){
 			var tr = this.children[i];
@@ -112,7 +121,8 @@
 					num -= dst.children.length;
 				}
 				if(elm.children.length <= 0){
-					elm.remove();
+					/** Compatible with browsers where 'remove' is not defined */
+					elm.parentNode.removeChild(elm);
 					i--;
 				}
 			}
