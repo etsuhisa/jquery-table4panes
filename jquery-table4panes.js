@@ -136,6 +136,20 @@
 	}
 
 	/**
+	 * getWidthCols(row_num)
+	 * @param this (in) table node
+	 * @param row_nums (in) numbers of rows to get width.
+	 * @return the array of width of all columns in the first row.
+	 */
+	var getWidthCols = function(row_num){
+		var arr = [];
+		$(this).find("tr:eq("+row_num+")").children().each(function(i,elm){
+			arr.push($(elm).width());
+		});
+		return arr;
+	}
+
+	/**
 	 * getHeightRows()
 	 * @param this (in) table node
 	 * @return the array of height of all rows.
@@ -149,23 +163,29 @@
 	}
 
 	/**
-	 * setWidthCols(row_num)
+	 * setWidthCols(arr, row_num)
+	 * Set width of all columns in the first row.
+	 * @param this (in) table node
+	 * @param arr (in) width of columns
+	 * @param row_nums (in) numbers of rows to set width.
+	 * @return this.
+	 */
+	var setWidthCols = function(arr, row_num){
+		$(this).find("tr:eq("+row_num+")").children().each(function(i,elm){
+			setFixWidth.call($(elm), arr[i]);
+		});
+		return $(this);
+	}
+
+	/**
+	 * reapplyWidthCols(row_num)
 	 * Set width of all columns in the specified rows.
 	 * @param this (in) table node
 	 * @param row_nums (in) numbers of rows to set width.
 	 * @return this
 	 */
-	var setWidthCols = function(row_num){
-		var row_s = 0;
-		var row_e = 0;
-		if(typeof row_num == "number"){
-			row_e = row_num;
-		}
-		else{
-			row_s = row_num[0];
-			row_e = row_num[1];
-		}
-		$(this).find("tr").slice(row_s,row_e+1).each(function(i,tr){
+	var reapplyWidthCols = function(row_num){
+		$(this).find("tr").slice(row_num[0],row_num[1]+1).each(function(i,tr){
 			$(tr).children().each(function(j,elm){
 				setFixWidth.call($(elm), Math.ceil($(elm).width()));
 			});
@@ -214,6 +234,33 @@
 	}
 
 	/**
+	 * createDummyRow(col_num)
+	 * Create dummy row to fix width of columns.
+	 * @param this (in) target node
+	 * @param col_num (in) number of columns
+	 * @return object of dummy row.
+	 */
+	var createDummyRow = function(col_num){
+		var dummy = {};
+		var $tr = $("<tr>");
+		$(this).find("tr:first").children().each(function(i,elm){
+			for(var j = 0; j < elm.colSpan; j++){
+				$tr.append("<td>");
+			}
+		});
+		$(this).find("tr:last").after($tr);
+		var widths = [];
+		$tr.children().each(function(i,elm){
+			widths.push($(elm).width());
+		});
+		dummy.left_widths = widths.slice(0, col_num);
+		dummy.right_widths = widths.slice(col_num);
+		dummy.$right_tr = $tr.remove();
+		dummy.$left_tr = $("<tr>").append($tr.find("td:lt("+col_num+")"));
+		return dummy;
+	}
+
+	/**
 	 * Call this function to split the table to four panes.
 	 */
 	$.fn.table4panes = function(col_num, row_num, settings){
@@ -221,7 +268,7 @@
 		/** Set the default class name prefix, if no prefix. */
 		var prefix = "table4panes";
 		if(settings && settings["prefix"]) prefix = settings["prefix"];
-		var fix_width_rows = row_num;
+		var fix_width_rows = [0, row_num];
 		if(settings && settings["fix-width-rows"]){
 			fix_width_rows = settings["fix-width-rows"];
 		}
@@ -239,7 +286,13 @@
 		/** Prepare to split the table. */
 		$(this).css({"table-layout":"fixed"});
 		$(this).addClass("pane");
-		setWidthCols.call($(this), fix_width_rows); /* Fix width of columns */
+		var dummy_row = null;
+		if(fix_width_rows == "dummy"){
+			dummy_row = createDummyRow.call($(this), col_num);
+		}
+		else{
+			reapplyWidthCols.call($(this), fix_width_rows); /* Fix width of columns */
+		}
 		var row_heights = getHeightRows.call($(this)); /* Get height of rows */
 
 		/** Wrap table with div node. */
@@ -259,6 +312,18 @@
 		$table_bottom_right.before($table_top_right);
 		$table_bottom_left.before($table_top_left);
 		$div_right.before($div_left);
+
+		/** Insert the dummy rows to top of each pane. */
+		if(dummy_row){
+			$table_top_left.find("tr:first").before(dummy_row.$left_tr);
+			setWidthCols.call($table_top_left, dummy_row.left_widths, 0);
+			$table_bottom_left.find("tr:first").before(dummy_row.$left_tr.clone());
+			setWidthCols.call($table_bottom_left, dummy_row.left_widths, 0);
+			$table_top_right.find("tr:first").before(dummy_row.$right_tr);
+			setWidthCols.call($table_top_right, dummy_row.right_widths, 0);
+			$table_bottom_right.find("tr:first").before(dummy_row.$right_tr.clone());
+			setWidthCols.call($table_bottom_right, dummy_row.right_widths, 0);
+		}
 
 		/** Wrap each tables with div node. */
 		var $div_bottom_right = $table_bottom_right.wrap("<div id='"+id_bottom_right+"'>").parent();

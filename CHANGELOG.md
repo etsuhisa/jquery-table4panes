@@ -9,7 +9,7 @@
 ### Changes
 
 - Conpatible with IE
-- The option fix-width-rows is specified as an array of lower and upper limit values.
+- The fix-width-rows value is specified as "dummy" or array of numbers.
 
 ### Bug Fixes
 

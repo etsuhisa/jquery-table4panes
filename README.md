@@ -54,6 +54,7 @@ The size of each pane is specified the following:
 ### "fix-width-rows"
 This option specifies an array of the start and end of the row(index) used to fix the column width.
 The default value is [0, row_num].
+If the fix-width-rows value is set to "dummy", column widths are fixed by inserting dummy rows into each pane.
 
 ### "callbacks"
 The option specifies event/function/data for the selectors and specifies callbacks for each event.
