@@ -10,6 +10,7 @@
 
 - Conpatible with IE
 - The fix-width-rows value is specified as "dummy" or array of numbers.
+- Cells shift due to rowspan.
 
 ### Bug Fixes
 

@@ -4,7 +4,26 @@
 <script src="jquery-table4panes.js"></script>
 <script type="text/javascript">
 $(function(){
-    $("#demo-table").table4panes(6,4,{"display-method":"flex", "width":"100%", "height":"100%", "fit":true, "fix-width-rows":"dummy"});
+    $("#demo-table").table4panes(4,3,{"display-method":"flex", "width":"100%", "height":"100%", "fit":true, "fix-width-rows":"dummy",
+      "callbacks":{
+        "#demo-table-top-left":[
+          {"event":"mouseover", "func":function(){$(this).css("background", "skyblue");}},
+          {"event":"mouseout", "func":function(){$(this).css("background", "white");}}
+        ],
+        "#demo-table-top-right":[
+          {"event":"mouseover", "func":function(){$(this).css("background", "pink");}},
+          {"event":"mouseout", "func":function(){$(this).css("background", "white");}}
+        ],
+        "#demo-table-bottom-left":[
+          {"event":"mouseover", "func":function(){$(this).css("background", "purple");}},
+          {"event":"mouseout", "func":function(){$(this).css("background", "white");}}
+        ],
+        "#demo-table-bottom-right":[
+          {"event":"mouseover", "func":function(){$(this).css("background", "lime");}},
+          {"event":"mouseout", "func":function(){$(this).css("background", "white");}}
+        ]
+      }
+    });
 });
 </script>
 <title>table4panes demo</title>
@@ -13,9 +32,9 @@ $(function(){
 <table id="demo-table" border="1">
   <thead>
   <tr>
-    <th colspan="3">z6Yr</th>
-    <!--th>4E7</th>
-    <th>bYZDnW</th-->
+    <th>z6Yr</th>
+    <th>4E7</th>
+    <th>bYZDnW</th>
     <th>feQLjU</th>
     <th>gNuVS9HmiMZp</th>
     <th>gskQIyGg</th>
@@ -37,12 +56,12 @@ $(function(){
   </thead>
   <tbody>
   <tr>
-    <!--th></th>
+    <th></th>
     <th>wFi</th>
-    <th>sMR6AKMX3w</th-->
-    <td colspan="6" rowspan="2">udv7JhMY4qyn</td>
-    <!--td>d3QWJIjUAzLZ</td>
-    <td>c0wXbP04OM0t</td-->
+    <th>sMR6AKMX3w</th>
+    <td>udv7JhMY4qyn</td>
+    <td>d3QWJIjUAzLZ</td>
+    <td>c0wXbP04OM0t</td>
     <td>Q1C2Yr088W</td>
     <td>LMtA6</td>
     <td>s5ZnlDb4BIYs</td>
@@ -59,12 +78,12 @@ $(function(){
     <td>v0L4P7fiEPYHhAhZmwhkCPPIhJhLd</td>
   </tr>
   <tr>
-    <!--td>rXb3man</td>
+    <td>rXb3man</td>
     <td>xD5</td>
     <td>vNNfBQ97u</td>
     <td>iHez5v58Vhp</td>
     <td>08ps4XHp6</td>
-    <td>Dtfo24eKu</td-->
+    <td>Dtfo24eKu</td>
     <td>Z5KBmNoPK6shpfb</td>
     <td>QnvSnhjiZN</td>
     <td>X</td>
@@ -125,12 +144,12 @@ $(function(){
     <td>hD522NJi</td>
   </tr>
   <tr>
-    <td colspan="6" rowspan="3">8uxNQU</td>
-    <!--td>qiGGeiWL1dH</td>
+    <td>8uxNQU</td>
+    <td>qiGGeiWL1dH</td>
     <td>8Fp6lHh6</td>
     <td>lV3Dl</td>
     <td>0ej0LFC649D4</td>
-    <td>p29Pz2l6vI</td-->
+    <td>p29Pz2l6vI</td>
     <td>2J</td>
     <td>b37hihHkw</td>
     <td>ot02B</td>
@@ -147,12 +166,12 @@ $(function(){
     <td>OUKXmpAEPvWitbVBejC9neEj0</td>
   </tr>
   <tr>
-    <!--td>MqBn</td>
+    <td>MqBn</td>
     <td>OUX3w</td>
     <td>krJ1ToknR</td>
     <td>44Vmy9Va</td>
     <td>3Buwej26k0EOX</td>
-    <td>0tGhO</td-->
+    <td>0tGhO</td>
     <td>oiL7wA24jrotT</td>
     <td>3G</td>
     <td>RJtW6Qzj8PLTQvZD9</td>
@@ -169,12 +188,12 @@ $(function(){
     <td>bl4wqVYtkFt2uSSWtjHP1L</td>
   </tr>
   <tr>
-    <!--td>r</td>
+    <td>r</td>
     <td>us4LNexft</td>
     <td>LVgcLew</td>
     <td></td>
     <td>Ska</td>
-    <td>p</td-->
+    <td>p</td>
     <td>GzjV8TP</td>
     <td>qx2kUdKZEB6</td>
     <td>2RF</td>

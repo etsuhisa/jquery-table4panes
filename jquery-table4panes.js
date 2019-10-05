@@ -16,9 +16,13 @@
  *   "display-method": ("inline-block"|"table-cell"|"flex"|"float") - Select the method.
  *   "fit": (true|flase) - If true, fit the bottom right pane fits the parent node.
  *   ("height"|"top-height"|"bottom-height"|"width"|"left-width"|"right-width"): size - Set the size.
- *   "fix-width-rows": [lower,upper] or upper - Fix the width of columns with the specified numbers of lower/upper row.
- *   "callbacks": {"selector1": {"event":"event1", "func":"func1", "data":"data1"},
- *                 "selector2": {"event":"event2", "func":"func2", "data":"data2"}, ... } - Set the callbacks.
+ *   "fix-width-rows": [lower,upper] or "dummy" - Fix the width of columns
+ *                     with the specified numbers of lower/upper row.
+ *   "callbacks": {"selector1": [ 
+ *                  {"event":"event1-a", "func":"func1-a", "data":"data1-a"},
+ *                  {"event":"event1-b", "func":"func1-b", "data":"data1-b"}, ...  ],
+ *                 "selector2": {"event":"event2", "func":"func2", "data":"data2"},
+ *                 ... } - Set the callbacks by arrays or maps for each selector.
  *   "css": {"selector1": "css-map1", "selector2": "css-map2", ... } - Map the css.
  *   "prefix": "prefix" - Set the prefix for the class name.
  * @return the top level div node.
@@ -40,6 +44,7 @@
  * | | +- div top-left --------+ | | +- div top-right -------+ | |
  * | | |      #id-top-left     | | | |      #id-top-right    | | |
  * | | |      .prefix-top      | | | |      .prefix-top      | | |
+ * | | |      .pane            | | | |      .pane            | | |
  * | | | +- table -----------+ | | | | +- table -----------+ | | |
  * | | | | col_num x row_num | | | | | | *** x row_num     | | | |
  * | | | +-------------------+ | | | | +-------------------+ | | |
@@ -47,6 +52,7 @@
  * | | +- div bottom-left -----+ | | +- div bottom-right--- -+ | |
  * | | |      #id-bottom-left  | | | |      #id-bottom-right | | |
  * | | |      .prefix-bottom   | | | |      .prefix-bottom   | | |
+ * | | |      .pane            | | | |      .pane            | | |
  * | | | +- table -----------+ | | | | +- table id --------+ | | |
  * | | | | col_num x ***     | | | | | | *** x ***         | | | |
  * | | | +-------------------+ | | | | +-------------------+ | | |
@@ -102,13 +108,19 @@
 	 * @return the created table
 	 */
 	var moveToNewTable = function(kind, num){
+		/** Clone the node without children and id. */
 		var src = this;
 		var dst = src.cloneNode(false);
 		dst.removeAttribute("id");
+		/** If no move, return the clone node only. */
+		if(num <= 0) return dst;
+		/** Array of number of columns to move for each tr node. */
 		var nums = null;
-		for(var i = 0; i < src.children.length && num > 0; i++){
+		/** Apply process for each child node. */
+		for(var i = 0; i < src.children.length; i++){
 			var elm = src.children[i];
 			var tag = elm.nodeName.toLowerCase();
+			/** Recall to subnodes (thead/tbody -> [tr], tr -> [th/td]). */
 			if(tag == "thead" || tag == "tbody" || (tag == "tr" && kind == "col")){
 				if(tag == "tr" && kind == "col"){
 					if(nums == null){
@@ -119,17 +131,20 @@
 				var chld = dst.appendChild(moveToNewTable.call(elm, kind, num));
 				if(kind == "row"){
 					num -= chld.children.length;
+					if(num <= 0) break;
 				}
-				if(elm.children.length <= 0){
+				if(tag != "tr" && elm.children.length <= 0){
 					/** Compatible with browsers where 'remove' is not defined */
 					elm.parentNode.removeChild(elm);
 					i--;
 				}
 			}
+			/** Move to destination node (row -> tr, col -> th/td). */
 			else if(tag == "tr" || tag == "th" || tag == "td"){
 				dst.appendChild(elm);
 				i--;
 				num -= (elm.colSpan || 1);
+				if(num <= 0) break;
 			}
 		}
 		return dst;
@@ -265,13 +280,8 @@
 	 */
 	$.fn.table4panes = function(col_num, row_num, settings){
 
-		/** Set the default class name prefix, if no prefix. */
-		var prefix = "table4panes";
-		if(settings && settings["prefix"]) prefix = settings["prefix"];
-		var fix_width_rows = [0, row_num];
-		if(settings && settings["fix-width-rows"]){
-			fix_width_rows = settings["fix-width-rows"];
-		}
+		/** Do not process if target does not exist. */
+		if($(this).length <= 0) return;
 
 		/** Decide IDs. */
 		var id_table = $(this).attr("id");
@@ -282,6 +292,17 @@
 		var id_bottom_left = id_table + "-bottom-left";
 		var id_top_right = id_table + "-top-right";
 		var id_bottom_right = id_table + "-bottom-right";
+
+		/** Do not process if already applied. */
+		if($("#"+id_table4panes).length > 0) return;
+
+		/** Set the default class name prefix, if no prefix. */
+		var prefix = "table4panes";
+		if(settings && settings["prefix"]) prefix = settings["prefix"];
+		var fix_width_rows = [0, row_num];
+		if(settings && settings["fix-width-rows"]){
+			fix_width_rows = settings["fix-width-rows"];
+		}
 
 		/** Prepare to split the table. */
 		$(this).css({"table-layout":"fixed"});
@@ -419,8 +440,13 @@
 
 		/** Set event actions from settings. */
 		if(settings["callbacks"]){
-			$.each(settings["callbacks"], function(sel, action){
-				$(sel).on(action.event, action.data, action.func);
+			$.each(settings["callbacks"], function(sel, actions){
+				if(!$.isArray(actions)){
+					actions = [actions];
+				}
+				$.each(actions, function(i, action){
+					$(sel).on(action.event, action.data, action.func);
+				});
 			});
 		}
 
