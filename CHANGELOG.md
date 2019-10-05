@@ -1,6 +1,6 @@
 # Change Log
 
-## v1.1.1 - 29th Sep, 2019
+## v0.1.1 - 29th Sep, 2019
 
 ### New Features
 
@@ -17,7 +17,7 @@
 - Subtract the number of child elements of thead/tbody.
 - Calculate with width/height as integer values.
 
-## v1.1.0 - 28th Sep, 2019
+## v0.1.0 - 28th Sep, 2019
 
 ### New Features
 
@@ -31,7 +31,7 @@
 
 - none
 
-## v1.0.0 - 23rd Sep, 2019
+## v0.0.0 - 23rd Sep, 2019
 
 ### New Features
 
