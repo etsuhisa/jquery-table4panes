@@ -1,5 +1,19 @@
 # Change Log
 
+## v0.2.0 - 6th Oct, 2019
+
+### New Features
+
+- Split multiple tables provided by selector.
+
+### Changes
+
+- none
+
+### Bug Fixes
+
+- none
+
 ## v0.1.1 - 29th Sep, 2019
 
 ### New Features

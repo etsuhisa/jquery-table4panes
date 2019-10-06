@@ -1,4 +1,4 @@
-# jQuery Table4Panes 0.1.1
+# jQuery Table4Panes 0.2.0
 Split the table into 4 panes with only JavaScript without changing the HTML.
 
 ## Demo
@@ -15,9 +15,11 @@ Include jQuery and the plugin on a page.
 <script src="jquery-table4panes.min.js"></script>
 ```
 
-Call the table4panes function for the table to split.
+Call the table4panes function for the table(s) to be split specified by the selector.
 Specify the number of columns in the first parameter and the number of rows in the second parameter.
 The settings (ex. display size, display method) specify in the third parameter.
+For a single table, this function returns the top level node.
+If more than one table is specified by the selector, this function returns an array of top-level nodes for each table.
 
 ```js
 $.fn.table4panes(col_num, row_num, settings)

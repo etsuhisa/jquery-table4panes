@@ -1,4 +1,4 @@
-# jQuery Table4Panes 0.1.1
+# jQuery Table4Panes 0.2.0
 HTMLを変更せずにJavaScriptのみでテーブルを4つのペインに分割します。
 
 ## デモ
@@ -15,9 +15,11 @@ jQueryとこのプラグインをページに含めてください。
 <script src="jquery-table4panes.min.js"></script>
 ```
 
-分割するテーブルに対してtable4panes関数を呼び出します。
+セレクタで指定した分割するテーブルに対してtable4panes関数を呼び出します。
 1つ目の引数に列数、2つ目の引数に行数を指定します。
 各種設定(表示サイズや表示方法など)は3つ目の引数に指定します。
+単一テーブルの場合は、この関数はトップレベルのノードを返却します。
+セレクタにより複数のテーブルを指定した場合は、この関数は各テーブルに対するトップレベルのノードの配列を返却します。
 
 ```js
 $.fn.table4panes(col_num, row_num, settings)

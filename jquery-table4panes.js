@@ -1,5 +1,5 @@
 /**
- * jquery-table4panes 0.1.1 - jQuery plugin to split the table to four panes.
+ * jquery-table4panes 0.2.0 - jQuery plugin to split the table to four panes.
  *
  * Copyright (c) 2019 ASAI Etsuhisa
  * This software is released under the MIT License.
@@ -276,15 +276,24 @@
 	}
 
 	/**
-	 * Call this function to split the table to four panes.
+	 * Body of table4panes.
 	 */
-	$.fn.table4panes = function(col_num, row_num, settings){
+	var table4panes_body = function(index, col_num, row_num, settings){
 
-		/** Do not process if target does not exist. */
-		if($(this).length <= 0) return;
+		/** Set the default class name prefix, if no prefix. */
+		var prefix = "table4panes";
+		if(settings && settings["prefix"]) prefix = settings["prefix"];
+		var fix_width_rows = [0, row_num];
+		if(settings && settings["fix-width-rows"]){
+			fix_width_rows = settings["fix-width-rows"];
+		}
 
 		/** Decide IDs. */
 		var id_table = $(this).attr("id");
+		if(!id_table){ /** table has no ID */
+			id_table = prefix+index;
+			$(this).attr("id", id_table);
+		}
 		var id_table4panes = id_table + "-table4panes";
 		var id_left = id_table + "-left";
 		var id_right = id_table + "-right";
@@ -295,14 +304,6 @@
 
 		/** Do not process if already applied. */
 		if($("#"+id_table4panes).length > 0) return;
-
-		/** Set the default class name prefix, if no prefix. */
-		var prefix = "table4panes";
-		if(settings && settings["prefix"]) prefix = settings["prefix"];
-		var fix_width_rows = [0, row_num];
-		if(settings && settings["fix-width-rows"]){
-			fix_width_rows = settings["fix-width-rows"];
-		}
 
 		/** Prepare to split the table. */
 		$(this).css({"table-layout":"fixed"});
@@ -465,4 +466,16 @@
 		/** Return the top level node. */
 		return $div_table4panes;
 	}
+
+	/**
+	 * Call this function to split the table to four panes.
+	 */
+	$.fn.table4panes = function(col_num, row_num, settings){
+		var top_nodes = [];
+		$.each($(this), function(i, elm){
+			top_nodes.push(table4panes_body.call($(elm), i, col_num, row_num, settings));
+		});
+		return top_nodes.length == 1 ? to_nodes[0] : top_nodes;
+	}
+
 })(jQuery);
